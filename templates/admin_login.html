@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a2a6c;
+            --primary-light: #2a5298;
+            --secondary: #2563eb;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f1f5f9;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+        
+        .admin-dashboard {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--dark);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        .admin-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .admin-logo i {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+        
+        .admin-logo-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-logo-text i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .admin-logo-text h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .admin-logo-text p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .admin-nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+        
+        .admin-nav a:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+        
+        .admin-main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .admin-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .admin-login-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .admin-logo-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .admin-logo-text i {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .admin-logo-text h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .admin-logo-text p {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .admin-stats {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0.5rem 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .dashboard-header h2 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .dashboard-header h2 i {
+            margin-right: 0.5rem;
+            color: var(--accent);
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 42, 108, 0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+        
+        .user-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .user-item, .database-user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .user-item:hover, .database-user-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        }
+        
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .user-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+        
+        .user-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .user-meta i {
+            font-size: 0.8rem;
+        }
+        
+        .user-info, .database-user-info {
+            flex: 1;
+            min-width: 0; /* Allow text truncation */
+        }
+        
+        .user-info strong, .database-user-info strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+            color: var(--primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .user-info span, .database-user-info span {
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: block;
+            margin-bottom: 0.1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .logout-user, .delete-user {
+            background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        
+        .logout-user:hover, .delete-user:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .admin-section h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 0;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .admin-section h3 i {
+            margin-right: 0.5rem;
+        }
+        
+        .section-info {
+            color: var(--gray);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        .dashboard-section {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--light-gray);
+            outline: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        .error-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: none;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        
+        /* Desktop styles */
+        @media (min-width: 769px) {
+            .user-item, .database-user-item {
+                flex-direction: row;
+            }
+            
+            .user-actions {
+                flex-direction: row;
+            }
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .admin-header-content {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0 15px;
+            }
+            
+            .admin-main {
+                padding: 0 15px;
+                margin: 1rem auto;
+            }
+            
+            .admin-section {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding-bottom: 1rem;
+            }
+            
+            .user-item, .database-user-item {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+            
+            .user-actions {
+                flex-direction: row;
+                justify-content: flex-end;
+                width: 100%;
+            }
+            
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .logout-user, .delete-user {
+                padding: 0.5rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .admin-logo-text h1 {
+                font-size: 1.5rem;
+            }
+            
+            .dashboard-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Small mobile styles */
+        @media (max-width: 480px) {
+            .admin-section {
+                padding: 1rem;
+            }
+            
+            .user-item, .database-user-item {
+                padding: 1rem;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .logout-user, .delete-user {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .admin-logo-text h1 {
+                font-size: 1.3rem;
+            }
+            
+            .admin-logo-text p {
+                font-size: 1rem;
+            }
+            
+            .user-meta {
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+            
+            .dashboard-header {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-dashboard">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-content">
+                <div class="admin-logo">
+                    <i class="fas fa-user-shield"></i>
+                    <span>JobShield AI Admin</span>
+                </div>
+                <nav class="admin-nav">
+                    <a href="/">Back to Main Site</a>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="admin-main">
+            <div id="login-section" class="admin-section">
+                <div class="admin-logo-text">
+                    <i class="fas fa-user-shield"></i>
+                    <h1>JobShield AI Admin</h1>
+                    <p>Administrator Control Panel</p>
+                </div>
+        
+                <div id="error-message" class="error-message"></div>
+            
+            <form id="admin-login-form">
+                <div class="form-group">
+                    <label for="admin-username">Admin Username</label>
+                    <input type="text" id="admin-username" name="admin-username" class="form-control" placeholder="Enter admin username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-password">Admin Password</label>
+                    <input type="password" id="admin-password" name="admin-password" class="form-control" placeholder="Enter admin password" required>
+                </div>
+                
+                <button type="submit" class="btn">Login as Administrator</button>
+            </form>
+            
+            <a href="/" class="back-link">&larr; Back to Main Site</a>
+            </div>
+        
+        <div id="dashboard-section" class="admin-section" style="display: none;">
+            <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+                <h2><i class="fas fa-chart-bar"></i> Admin Dashboard</h2>
+                <button id="admin-logout" class="btn btn-secondary">Logout</button>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-number" id="online-users-count">0</div>
+                <div>Users Currently Online</div>
+            </div>
+            
+            <div class="dashboard-section" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3><i class="fas fa-users"></i> Active Users</h3>
+                    <span class="section-info">Currently logged in users</span>
+                </div>
+                <div class="user-list" id="user-list">
+                    <!-- User list will be populated here -->
+                    <p id="no-users-message">No users are currently online.</p>
+                </div>
+            </div>
+            
+            <div class="dashboard-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3><i class="fas fa-database"></i> Users Database</h3>
+                    <div>
+                        <button id="refresh-users" class="btn btn-secondary" style="margin-left: 0.5rem;">
+                            <i class="fas fa-sync"></i> Refresh Users
+                        </button>
+                    </div>
+                </div>
+                <div class="user-list" id="database-users-list">
+                    <!-- Database users list will be populated here -->
+                    <p id="no-database-users-message">Loading users database...</p>
+                </div>
+            </div>
+            
+            <a href="/" class="back-link">&larr; Back to Main Site</a>
+        </div>
+    </main>
+</div>
+
+    <script>
+        // Handle admin login
+        document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            // Clear previous error messages
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none';
+            
+            // Simple admin credentials check (in a real app, this would be server-side)
+            if (username === 'admin' && password === 'admin') {
+                // Show dashboard
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard-section').style.display = 'block';
+                
+                // Load user data
+                loadUserData();
+                loadDatabaseUsers();
+            } else {
+                errorMessage.textContent = 'Invalid admin credentials';
+                errorMessage.style.display = 'block';
+            }
+        });
+        
+        // Handle admin logout
+        document.getElementById('admin-logout').addEventListener('click', function() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('admin-username').value = '';
+            document.getElementById('admin-password').value = '';
+        });
+        
+        // Refresh users database
+        document.getElementById('refresh-users').addEventListener('click', function() {
+            loadDatabaseUsers();
+        });
+        
+        // Load user data from server
+        function loadUserData() {
+            fetch('/api/admin/online-users')
+                .then(response => response.json())
+                .then(data => {
+                    // Update online users count
+                    document.getElementById('online-users-count').textContent = data.count;
+                    
+                    // Update user list
+                    const userList = document.getElementById('user-list');
+                    const noUsersMessage = document.getElementById('no-users-message');
+                    
+                    if (data.count > 0) {
+                        noUsersMessage.style.display = 'none';
+                        userList.innerHTML = '';
+                        
+                        // Add users to list
+                        data.users.forEach(user => {
+                            const userItem = document.createElement('div');
+                            userItem.className = 'user-item';
+                            userItem.innerHTML = `
+                                <div class="user-details">
+                                    <div class="user-header">
+                                        <div class="user-name">${user.username}</div>
+                                    </div>
+                                    <div class="user-meta">
+                                        <span><i class="fas fa-clock"></i> ${formatDuration(user.duration)}</span>
+                                    </div>
+                                </div>
+                                <button class="logout-user" data-user="${user.username}">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            `;
+                            userList.appendChild(userItem);
+                        });
+                        
+                        // Add event listeners to logout buttons
+                        document.querySelectorAll('.logout-user').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const username = this.getAttribute('data-user');
+                                if (confirm(`Are you sure you want to logout ${username}?`)) {
+                                    // Make API call to logout user
+                                    fetch('/api/admin/logout-user', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({username: username})
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            // Remove user from list
+                                            this.parentElement.remove();
+                                            
+                                            // Update count
+                                            const currentCount = parseInt(document.getElementById('online-users-count').textContent);
+                                            document.getElementById('online-users-count').textContent = currentCount - 1;
+                                            
+                                            // Show no users message if needed
+                                            if (currentCount - 1 === 0) {
+                                                noUsersMessage.style.display = 'block';
+                                            }
+                                        } else {
+                                            alert('Error: ' + result.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        alert('Error logging out user: ' + error.message);
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        noUsersMessage.style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user data:', error);
+                    document.getElementById('online-users-count').textContent = 'Error';
+                });
+        }
+        
+        // Load database users
+        function loadDatabaseUsers() {
+            fetch('/api/admin/database-users')
+                .then(response => response.json())
+                .then(data => {
+                    const userList = document.getElementById('database-users-list');
+                    const noUsersMessage = document.getElementById('no-database-users-message');
+                    
+                    if (data.count > 0) {
+                        noUsersMessage.style.display = 'none';
+                        userList.innerHTML = '';
+                        
+                        // Add users to list
+                        data.users.forEach(user => {
+                            const userItem = document.createElement('div');
+                            userItem.className = 'database-user-item';
+                            userItem.innerHTML = `
+                                <div class="user-details">
+                                    <div class="user-header">
+                                        <div class="user-name">${user.username}</div>
+                                    </div>
+                                    <div class="user-meta">
+                                        <span><i class="fas fa-envelope"></i> ${user.email}</span>
+                                        <span><i class="fas fa-calendar"></i> ${formatDate(user.created_at)}</span>
+                                    </div>
+                                </div>
+                                <div class="user-actions">
+                                    <button class="delete-user" data-user="${user.username}">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            `;
+                            userList.appendChild(userItem);
+                        });
+                        
+                        // Add event listeners to delete buttons
+                        document.querySelectorAll('.delete-user').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const username = this.getAttribute('data-user');
+                                if (confirm(`Are you sure you want to delete user ${username}? This action cannot be undone.`)) {
+                                    // Make API call to delete user
+                                    fetch('/api/admin/delete-user', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({username: username})
+                                    })
+                                    .then(response => response.json())
+                                    .then(result => {
+                                        if (result.success) {
+                                            alert(`User ${username} has been deleted.`);
+                                            // Reload the user list
+                                            loadDatabaseUsers();
+                                        } else {
+                                            alert('Error: ' + result.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        alert('Error deleting user: ' + error.message);
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        noUsersMessage.style.display = 'block';
+                        noUsersMessage.textContent = 'No users found in database.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading database users:', error);
+                    document.getElementById('no-database-users-message').textContent = 'Error loading users database.';
+                });
+        }
+        
+        // Format date string
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleString();
+        }
+        
+        // Format duration string
+        function formatDuration(durationStr) {
+            // Parse the duration string (format: "days, hours:minutes:seconds.microseconds")
+            const parts = durationStr.split(', ');
+            if (parts.length > 1) {
+                // Has days
+                const days = parts[0].split(' ')[0];
+                const timeParts = parts[1].split(':');
+                const hours = timeParts[0];
+                return `${days} days, ${hours} hours ago`;
+            } else {
+                // Only time
+                const timeParts = durationStr.split(':');
+                const hours = timeParts[0];
+                const minutes = timeParts[1];
+                return `${hours} hours, ${minutes} minutes ago`;
+            }
+        }
+    </script>
+</body>
+</html>

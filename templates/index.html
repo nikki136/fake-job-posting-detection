@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fake Job Post Detection using Machine Learning</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+        
+        .research-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 2px rgba(248, 46, 46, 0.2);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .btn-secondary {
+            background: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background: #2c3e50;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+        }
+        
+        .btn-warning {
+            background: var(--warning-color);
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        
+        .method-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .method-buttons .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .result-card {
+            margin-top: 20px;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .result-real {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result-fake {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 1px solid #f5c6cb;
+        }
+        
+        .result-error {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+            border: 1px solid #ffeaa7;
+        }
+        
+        .result-card h3 {
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        .result-card p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .confidence-bar {
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .real-confidence {
+            background: var(--success-color);
+        }
+        
+        .fake-confidence {
+            background: var(--accent-color);
+        }
+        
+        .technology-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tech-item {
+            background: var(--light-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .tech-item:hover {
+            transform: scale(1.05);
+        }
+        
+        .tech-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+        
+        .highlight {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Fake Job Post Detection</h1>
+                <p class="subtitle">Using Machine Learning and Deep Learning Techniques</p>
+                <div class="research-info">
+                    <p>Based on research published in International Journal of Advances in Engineering and Management (IJAEM)</p>
+                    <p>Volume 7, Issue 07, July 2025 | DOI: 10.35629/5252-0707577585</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>Detect Fake Job Postings</h2>
+                <p>Our advanced system uses machine learning algorithms to analyze job postings and identify potential fraud. Simply provide a job URL, paste the job text, or upload a document to get started.</p>
+                
+                <form id="jobForm">
+                    <div class="form-group">
+                        <label for="jobUrl"><strong>Job URL:</strong></label>
+                        <input type="url" id="jobUrl" class="form-control" placeholder="https://example.com/job-posting">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><strong>OR Paste Job Text:</strong></label>
+                        <textarea id="jobText" class="form-control" placeholder="Paste the complete job posting text here..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><strong>OR Upload File:</strong></label>
+                        <input type="file" id="jobFile" class="form-control" accept=".txt,.pdf,.doc,.docx">
+                    </div>
+                    
+                    <div class="method-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="loadReal()">Load Real Job Example</button>
+                        <button type="button" class="btn btn-warning" onclick="loadFake()">Load Fake Job Example</button>
+                        <button type="button" class="btn btn-success" onclick="clearAll()">Clear All</button>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-block">Analyze Job Posting</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2>About This Research</h2>
+                <p>This system is based on comprehensive research that explores both traditional machine learning and deep learning approaches for fake job detection.</p>
+                
+                <h3>Key Methodologies:</h3>
+                <ul>
+                    <li>Term Frequency-Inverse Document Frequency (TF-IDF) for feature extraction</li>
+                    <li>Recurrent Neural Networks (RNN) with GloVe embeddings</li>
+                    <li>Ensemble modeling combining multiple classifiers</li>
+                    <li>Evaluation on the EMSCAD dataset</li>
+                </ul>
+                
+                <h3>Performance Metrics:</h3>
+                <ul>
+                    <li>Accuracy: <span class="highlight">94.3%</span></li>
+                    <li>F1-Score: <span class="highlight">92.2%</span></li>
+                    <li>ROC-AUC: <span class="highlight">0.97</span></li>
+                </ul>
+                
+                <h3>Research Team:</h3>
+                <p>Adarsh Salunkhe, Aditya Taware, Siddhant Golande, Rohan Khandagale, Manoj D. Shelar<br>
+                Computer Engineering, VPKBIET, Baramati, India</p>
+            </div>
+        </div>
+        
+        <div id="result"></div>
+        
+        <div class="technology-section">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>TF-IDF</h4>
+                    <p>Term Frequency-Inverse Document Frequency for feature extraction</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Machine Learning</h4>
+                    <p>Naive Bayes and Random Forest classifiers</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Deep Learning</h4>
+                    <p>Recurrent Neural Networks with GloVe embeddings</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Ensemble Modeling</h4>
+                    <p>Soft voting mechanism for improved accuracy</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Fake Job Post Detection System | Based on academic research | For educational and demonstration purposes</p>
+            <p>International Journal of Advances in Engineering and Management (IJAEM) | Volume 7, Issue 07, July 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        function loadReal() {
+            document.getElementById('jobText').value = 'Software Engineer - Microsoft - Seattle\n\nWe are seeking a talented Software Engineer to join our team in Seattle. The ideal candidate will have a BS in Computer Science or related field, 3+ years of experience in software development, and proficiency in Java, Python, or C++.\n\nResponsibilities:\n- Design and implement software solutions\n- Collaborate with cross-functional teams\n- Participate in code reviews and testing\n\nRequirements:\n- Bachelor\'s degree in Computer Science\n- 3+ years of software development experience\n- Strong problem-solving skills\n\nBenefits:\n- Competitive salary and stock options\n- Comprehensive health insurance\n- 401(k) with company matching\n- Flexible work arrangements';
+        }
+        
+        function loadFake() {
+            document.getElementById('jobText').value = 'URGENT! Make $5000/week from home! No experience needed!\n\nWork from home opportunity with unlimited earning potential. Just send us $200 for training materials and start earning immediately! No skills required, anyone can do this!\n\nWhy you\'ll love this opportunity:\n- Earn $5000+ per week from home\n- No experience necessary\n- Work your own hours\n- No boss telling you what to do\n\nAct now! Send $200 to secure your spot today!';
+        }
+        
+        function clearAll() {
+            document.getElementById('jobUrl').value = '';
+            document.getElementById('jobText').value = '';
+            document.getElementById('jobFile').value = '';
+            document.getElementById('result').innerHTML = '';
+        }
+        
+        document.getElementById('jobForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('jobUrl').value.trim();
+            const text = document.getElementById('jobText').value.trim();
+            
+            let requestData = {};
+            
+            if (text) {
+                requestData.text = text;
+            } else if (url) {
+                requestData.url = url;
+            } else {
+                document.getElementById('result').innerHTML = '<div class="result-card result-error"><h3>Error</h3><p>Please provide job information either through URL, text, or file upload.</p></div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    document.getElementById('result').innerHTML = `<div class="result-card result-error"><h3>Error</h3><p>${data.error}</p></div>`;
+                } else {
+                    const cardClass = data.prediction === 'REAL' ? 'result-real' : 'result-fake';
+                    const confidenceClass = data.prediction === 'REAL' ? 'real-confidence' : 'fake-confidence';
+                    
+                    document.getElementById('result').innerHTML = `
+                        <div class="result-card ${cardClass}">
+                            <h3>${data.prediction} Job Posting Detected</h3>
+                            <p><strong>Confidence Level:</strong> ${data.confidence}%</p>
+                            
+                            <div class="confidence-bar">
+                                <div class="confidence-fill ${confidenceClass}" style="width: ${data.confidence}%"></div>
+                            </div>
+                            
+                            <h4>Analysis Details:</h4>
+                            <p><strong>Title:</strong> ${data.job_details.title || 'Not provided'}</p>
+                            <p><strong>Company:</strong> ${data.job_details.company || 'Not provided'}</p>
+                            <p><strong>Location:</strong> ${data.job_details.location || 'Not provided'}</p>
+                            
+                            <h4>Research-Based Insights:</h4>
+                            <p>This analysis is based on machine learning techniques including TF-IDF feature extraction and ensemble modeling approaches as described in the IJAEM research paper.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<div class="result-card result-error"><h3>Network Error</h3><p>Unable to connect to the analysis service. Please try again later.</p></div>';
+            }
+        });
+    </script>
+</body>
+</html>

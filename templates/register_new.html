@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | JobShield AI</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="login-container">
+
+    <!-- Left Section -->
+    <div class="login-left">
+      <h2>Create Account</h2>
+      <p>Join JobShield AI Today</p>
+
+      <div class="social-login">
+        <button>G with Google</button>
+        <button>f</button>
+        <button>X</button>
+      </div>
+
+      <span class="or">or</span>
+
+      <form id="register-form">
+        <input type="text" id="username" name="username" placeholder="Username" required />
+        <input type="email" id="email" name="email" placeholder="Email" required />
+        <input type="password" id="password" name="password" placeholder="Password" required />
+
+        <label class="checkbox">
+          <input type="checkbox" required /> I agree to terms and conditions
+        </label>
+
+        <button type="submit" class="login-btn">Register</button>
+      </form>
+    </div>
+
+    <!-- Right Section -->
+    <div class="login-right">
+      <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216" alt="office" />
+      <div class="quote">
+        <h4>Steve Jobs</h4>
+        <p>
+          "Innovation distinguishes between a leader and a follower."
+        </p>
+      </div>
+      <a href="/login" class="signup">Login</a>
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      fetch('/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = '/detection';
+        } else {
+          alert(data.message || 'Registration failed');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during registration');
+      });
+    });
+  </script>
+
+</body>
+</html>

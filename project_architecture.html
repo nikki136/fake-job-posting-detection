@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobShield AI - Project Architecture</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f8fafc;
+            padding: 15px;
+            color: #333;
+            width: 1000px;
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .container {
+            width: 100%;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #2a5298;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .architecture-diagram {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #cbd5e1;
+        }
+        
+        /* Horizontal Flow Diagram Styles */
+        .flow-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 200px;
+        }
+        
+        .tier-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px 25px;
+            position: relative;
+            min-width: 170px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tier-column:not(:last-child):after {
+            content: '';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 4px;
+            background: #1a2a6c;
+            z-index: 1;
+        }
+        
+        .tier-column:not(:last-child):before {
+            content: '\2192';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #1a2a6c;
+            font-size: 28px;
+            font-weight: bold;
+            z-index: 2;
+        }
+        
+        .component {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            width: 150px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border: 2px solid #cbd5e1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 3;
+            transition: all 0.3s ease;
+        }
+        
+        .component:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #94a3b8;
+        }
+        
+        .component-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .component-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a2a6c;
+            font-size: 12px;
+        }
+        
+        .component-desc {
+            font-size: 10px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        
+        .tier-label {
+            font-weight: 700;
+            color: #1a2a6c;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            background: #e0f2fe;
+            padding: 8px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Component Colors with Icons */
+        .presentation-tier .component-icon {
+            background: rgba(26, 42, 108, 0.1);
+            color: #1a2a6c;
+        }
+        
+        .application-tier .component-icon {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .data-tier .component-icon {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .ml-tier .component-icon {
+            background: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .monitoring-tier .component-icon {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+        
+        .legend {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 2px solid #cbd5e1;
+        }
+        
+        .legend-title {
+            font-weight: 700;
+            color: #1a2a6c;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .legend-color {
+            width: 25px;
+            height: 5px;
+            border-radius: 3px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            background: #f1f5f9;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JobShield AI - System Architecture</h1>
+            <p class="subtitle">Horizontal flow diagram of the fake job detection system</p>
+        </header>
+        
+        <div class="architecture-diagram">
+            <div class="flow-container">
+                <!-- Presentation Tier -->
+                <div class="tier-column presentation-tier">
+                    <div class="tier-label">Presentation</div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-window-maximize"></i>
+                        </div>
+                        <div class="component-title">Web Interface</div>
+                        <div class="component-desc">User-facing web application</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="component-title">Admin Dashboard</div>
+                        <div class="component-desc">System monitoring interface</div>
+                    </div>
+                </div>
+                
+                <!-- Application Tier -->
+                <div class="tier-column application-tier">
+                    <div class="tier-label">Application</div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <div class="component-title">Flask Server</div>
+                        <div class="component-desc">Main web server and router</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-user-lock"></i>
+                        </div>
+                        <div class="component-title">Auth Service</div>
+                        <div class="component-desc">User authentication</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="component-title">API Gateway</div>
+                        <div class="component-desc">Request routing service</div>
+                    </div>
+                </div>
+                
+                <!-- Data Tier -->
+                <div class="tier-column data-tier">
+                    <div class="tier-label">Data</div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="component-title">SQLite DB</div>
+                        <div class="component-desc">User accounts and data</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="component-title">Job Storage</div>
+                        <div class="component-desc">Job posting repository</div>
+                    </div>
+                </div>
+                
+                <!-- ML Tier -->
+                <div class="tier-column ml-tier">
+                    <div class="tier-label">ML Engine</div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-spider"></i>
+                        </div>
+                        <div class="component-title">Web Scraper</div>
+                        <div class="component-desc">Extracts job content</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="component-title">Predictor</div>
+                        <div class="component-desc">Analyzes job postings</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="component-title">Trainer</div>
+                        <div class="component-desc">Model training service</div>
+                    </div>
+                </div>
+                
+                <!-- Monitoring Tier -->
+                <div class="tier-column monitoring-tier">
+                    <div class="tier-label">Monitoring</div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="component-title">Security</div>
+                        <div class="component-desc">Auth and data protection</div>
+                    </div>
+                    <div class="component">
+                        <div class="component-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <div class="component-title">Analytics</div>
+                        <div class="component-desc">Usage tracking</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-title">Component Legend</div>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #1a2a6c;"></div>
+                    <span>Presentation Tier</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #28a745;"></div>
+                    <span>Application Tier</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #dc3545;"></div>
+                    <span>Data Tier</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #6f42c1;"></div>
+                    <span>ML Engine</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ffc107;"></div>
+                    <span>Monitoring</span>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>JobShield AI - Fake Job Detection System Architecture | Research Paper Reference</p>
+        </footer>
+    </div>
+</body>
+</html>

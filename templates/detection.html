@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Job Detection - Analysis Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --card-bg: #ffffff;
+            --body-bg: #f1f5f9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--body-bg);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            color: var(--dark);
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+        }
+
+        nav a:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 3rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Forms Section */
+        .forms-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title h2 i {
+            color: var(--primary);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray);
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-example {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            box-shadow: none;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+        }
+
+        .btn-example:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Info Sidebar */
+        .info-sidebar {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            align-self: start;
+            position: sticky;
+            top: 80px;
+        }
+
+        .info-card {
+            margin-bottom: 2rem;
+        }
+
+        .info-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card h3 i {
+            color: var(--primary);
+        }
+
+        .tech-list {
+            list-style: none;
+        }
+
+        .tech-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tech-list li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-list li i {
+            color: var(--accent);
+        }
+
+        .examples-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .example-job {
+            background: var(--body-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .example-job:hover {
+            background: rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .example-job h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .example-job p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .example-job.fake {
+            border-left: 4px solid var(--danger);
+        }
+
+        .example-job.real {
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Results Section */
+        .results-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-content {
+            text-align: center;
+        }
+        
+        .explanation-text {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: var(--body-bg);
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .company-info {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        .result-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        #result-message strong {
+            color: var(--danger);
+        }
+        
+        #retry-analysis {
+            display: none;
+        }
+
+        .badge-real {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .badge-fake {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .confidence-meter {
+            width: 100%;
+            height: 20px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .confidence-level {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .real-confidence {
+            background: var(--accent);
+        }
+
+        .fake-confidence {
+            background: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--body-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner-border {
+            display: inline-block;
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid rgba(37, 99, 235, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* History Card Styles */
+        #card-history {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .history-items {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .history-item {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+        }
+        
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .history-timestamp {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+        
+        .history-item-content {
+            margin-top: 0.5rem;
+        }
+        
+        .history-job-info {
+            margin-bottom: 0.5rem;
+        }
+        
+        .history-confidence {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>JobShield AI</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><span id="user-info" style="padding: 0 10px; color: #666;"></span></li>
+                        <li><a href="/logout" style="color: #ef4444;">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Job Posting Analysis</h1>
+                <p>Analyze job postings for authenticity using advanced machine learning algorithms</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="main-content">
+            <!-- Forms Section -->
+            <div class="forms-section">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2><i class="fas fa-search"></i> Analyze Job Posting</h2>
+                    <button id="toggle-card-history" class="btn" style="font-size: 0.9rem; padding: 0.25rem 0.75rem;">
+                        <i class="fas fa-history"></i> History
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: 1rem; text-align: right;">
+                    <button id="test-connectivity" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;">
+                        <i class="fas fa-plug"></i> Test Connectivity
+                    </button>
+                    <button id="test-url" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; margin-left: 0.5rem;">
+                        <i class="fas fa-link"></i> Test URL
+                    </button>
+                    <span id="connectivity-status" style="margin-left: 0.8rem; font-size: 0.8rem;"></span>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="url">URL Input</div>
+                </div>
+
+                <!-- URL Input Tab -->
+                <div class="tab-content active" id="url-tab">
+                    <form id="url-form">
+                        <div class="form-group">
+                            <label for="job-url"><i class="fas fa-link"></i> Job Posting URL</label>
+                            <input type="url" id="job-url" class="form-control" placeholder="https://example.com/job-posting" required>
+                            <small style="color: #64748b;">Make sure to include https:// at the beginning of the URL</small>
+                        </div>
+                        <button type="submit" class="btn"><i class="fas fa-search"></i> Analyze URL</button>
+                        <button type="button" class="btn btn-secondary" id="url-clear"><i class="fas fa-times"></i> Clear</button>
+                        <div class="examples-section">
+                            <h3><i class="fas fa-lightbulb"></i> Example URLs</h3>
+                            <p>Try these example job postings:</p>
+                            <button type="button" class="btn btn-example" data-url="https://example.com/legit-software-engineer">Legitimate Software Engineer</button>
+                            <button type="button" class="btn btn-example" data-url="https://example.com/fake-work-from-home">Fake Work From Home Scam</button>
+
+                        </div>
+                        
+                        <!-- History Card (hidden by default) -->
+                        <div id="card-history-url" class="card" style="display: none; margin-top: 1rem;">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3><i class="fas fa-history"></i> Analysis History</h3>
+                                <button class="clear-history-tab btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;" data-tab="url">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="history-list" data-tab="url">
+                                    <!-- History items will be populated here -->
+                                    <p>No analysis history yet. Your analyzed jobs will appear here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Text Paste Tab -->
+                <div class="tab-content" id="text-tab">
+                    <form id="text-form">
+                        <div class="form-group">
+                            <label for="job-text"><i class="fas fa-paste"></i> Paste Job Description</label>
+                            <textarea id="job-text" class="form-control" placeholder="Paste the complete job posting text here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn"><i class="fas fa-search"></i> Analyze Text</button>
+                        <button type="button" class="btn btn-secondary" id="text-clear"><i class="fas fa-times"></i> Clear</button>
+                        <div class="examples-section">
+                            <h3><i class="fas fa-lightbulb"></i> Example Texts</h3>
+                            <p>Try these example job descriptions:</p>
+                            <button type="button" class="btn btn-example" data-text-type="legit">Legitimate Job Example</button>
+                            <button type="button" class="btn btn-example" data-text-type="fake">Fake Job Example</button>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background-color: var(--body-bg); border-radius: 8px; font-size: 0.9rem;">
+                                <p><strong>Tip:</strong> Pasting job descriptions directly is faster and more reliable than using URLs, especially for websites that load slowly.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- History Card (hidden by default) -->
+                        <div id="card-history-text" class="card" style="display: none; margin-top: 1rem;">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3><i class="fas fa-history"></i> Analysis History</h3>
+                                <button class="clear-history-tab btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;" data-tab="text">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="history-list" data-tab="text">
+                                    <!-- History items will be populated here -->
+                                    <p>No analysis history yet. Your analyzed jobs will appear here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Manual Entry Tab -->
+                <div class="tab-content" id="manual-tab">
+                    <form id="manual-form">
+                        <div class="form-group">
+                            <label for="job-title"><i class="fas fa-heading"></i> Job Title</label>
+                            <input type="text" id="job-title" class="form-control" placeholder="e.g., Software Engineer">
+                        </div>
+                        <div class="form-group">
+                            <label for="company-name"><i class="fas fa-building"></i> Company Name</label>
+                            <input type="text" id="company-name" class="form-control" placeholder="e.g., TechCorp">
+                        </div>
+                        <div class="form-group">
+                            <label for="job-location"><i class="fas fa-map-marker-alt"></i> Location</label>
+                            <input type="text" id="job-location" class="form-control" placeholder="e.g., Remote, New York">
+                        </div>
+                        <div class="form-group">
+                            <label for="job-description"><i class="fas fa-file-alt"></i> Job Description</label>
+                            <textarea id="job-description" class="form-control" placeholder="Detailed job description..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-requirements"><i class="fas fa-tasks"></i> Requirements</label>
+                            <textarea id="job-requirements" class="form-control" placeholder="Required qualifications and skills..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-benefits"><i class="fas fa-gift"></i> Benefits</label>
+                            <textarea id="job-benefits" class="form-control" placeholder="List of benefits offered..."></textarea>
+                        </div>
+                        <button type="submit" class="btn"><i class="fas fa-search"></i> Analyze Job</button>
+                        <button type="button" class="btn btn-secondary" id="manual-clear"><i class="fas fa-times"></i> Clear</button>
+                        <div class="examples-section">
+                            <h3><i class="fas fa-lightbulb"></i> Example Entries</h3>
+                            <p>Try these example job entries:</p>
+                            <button type="button" class="btn btn-example" data-entry-type="legit">Fill with Legitimate Job</button>
+                            <button type="button" class="btn btn-example" data-entry-type="fake">Fill with Fake Job</button>
+                            <div style="margin-top: 1rem; padding: 0.5rem; background-color: var(--body-bg); border-radius: 8px; font-size: 0.9rem;">
+                                <p><strong>Tip:</strong> Manual entry gives you the most control and is immune to website loading issues.</p>
+                            </div>
+                        </div>
+                        
+                        <!-- History Card (hidden by default) -->
+                        <div id="card-history-manual" class="card" style="display: none; margin-top: 1rem;">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3><i class="fas fa-history"></i> Analysis History</h3>
+                                <button class="clear-history-tab btn btn-secondary" style="font-size: 0.8rem; padding: 0.25rem 0.5rem;" data-tab="manual">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="history-list" data-tab="manual">
+                                    <!-- History items will be populated here -->
+                                    <p>No analysis history yet. Your analyzed jobs will appear here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div class="spinner" id="loading-spinner">
+                    <div class="spinner-border"></div>
+                    <p>Analyzing job posting...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="results-section">
+                    <div class="result-header">
+                        <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+                        <div>
+                            <button class="btn btn-secondary" id="retry-analysis" style="margin-right: 10px; display: none;"><i class="fas fa-sync"></i> Retry</button>
+                            <button class="btn btn-secondary" id="clear-results"><i class="fas fa-redo"></i> New Analysis</button>
+                        </div>
+                    </div>
+                    <div class="result-content">
+                        <div class="result-badge" id="result-badge">RESULT</div>
+                        <p id="result-message">The job posting has been analyzed successfully.</p>
+                        <div id="job-info"></div>
+                        
+                        <div class="confidence-meter">
+                            <div class="confidence-level" id="confidence-level"></div>
+                        </div>
+                        <p>Confidence: <span id="confidence-value">0%</span></p>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="fake-prob">0%</div>
+                                <div class="stat-label">Fake Probability</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="real-prob">0%</div>
+                                <div class="stat-label">Real Probability</div>
+                            </div>
+                        </div>
+                        
+                        <p id="explanation-text" style="display: none;"></p>
+                        
+                        <div id="error-suggestions" style="display: none; margin-top: 1rem; padding: 1rem; background-color: var(--body-bg); border-radius: 8px; text-align: left;">
+                            <h4><i class="fas fa-lightbulb"></i> Suggestions:</h4>
+                            <ul id="suggestion-list" style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>Try pasting the job description directly instead of using a URL</li>
+                                <li>Check if the website is accessible in your browser</li>
+                                <li>Ensure you have a stable internet connection</li>
+                                <li>Try a different job posting URL</li>
+                            </ul>
+                            <div id="network-error-suggestion" style="margin-top: 1rem; padding: 0.5rem; background-color: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger); display: none;">
+                                <p><strong>Network Issue:</strong> If you're seeing this error consistently, the server might be temporarily unavailable. Wait a few minutes and try again, or contact support if the problem persists.</p>
+                            </div>
+                            <div id="not-found-suggestion" style="margin-top: 1rem; padding: 0.5rem; background-color: rgba(245, 158, 11, 0.1); border-left: 3px solid var(--warning); display: none;">
+                                <p><strong>Page Not Found:</strong> The job posting you're trying to analyze doesn't appear to exist at the provided URL. This could be because the job has been filled, the URL is incorrect, or the posting has been removed. Try finding the job on the company's main website or paste the job description directly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Sidebar -->
+            <div class="info-sidebar">
+                <div class="info-card">
+                    <h3><i class="fas fa-info-circle"></i> How It Works</h3>
+                    <p>Our system analyzes job postings using advanced machine learning algorithms to detect fraudulent listings.</p>
+                    <p>Simply provide the job posting URL, paste the text, or manually enter the details for analysis.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3><i class="fas fa-brain"></i> Algorithms Used</h3>
+                    <ul class="tech-list">
+                        <li><i class="fas fa-check-circle"></i> TF-IDF Vectorization</li>
+                        <li><i class="fas fa-check-circle"></i> Logistic Regression</li>
+                        <li><i class="fas fa-check-circle"></i> Random Forest</li>
+                        <li><i class="fas fa-check-circle"></i> Naive Bayes</li>
+                        <li><i class="fas fa-check-circle"></i> Ensemble Modeling</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3><i class="fas fa-cogs"></i> Technologies</h3>
+                    <ul class="tech-list">
+                        <li><i class="fab fa-python"></i> Python</li>
+                        <li><i class="fas fa-flask"></i> Scikit-learn</li>
+                        <li><i class="fas fa-chart-bar"></i> TF-IDF</li>
+                        <li><i class="fas fa-cloud"></i> Flask</li>
+                        <li><i class="fas fa-database"></i> Pandas</li>
+                    </ul>
+                </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hide all history cards by default
+            document.querySelectorAll('[id^="card-history-"]').forEach(card => {
+                card.style.display = 'none';
+            });
+        });
+        
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-tab`).classList.add('active');
+                
+                // Hide all history cards
+                document.querySelectorAll('[id^="card-history-"]').forEach(card => {
+                    card.style.display = 'none';
+                });
+                
+                // Update history button text
+                document.getElementById('toggle-card-history').innerHTML = '<i class="fas fa-history"></i> History';
+            });
+        });
+
+        // Toggle history card visibility
+        document.getElementById('toggle-card-history').addEventListener('click', function() {
+            // Get the currently active tab
+            const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+            const historyCard = document.getElementById(`card-history-${activeTab}`);
+            
+            if (historyCard.style.display === 'none' || !historyCard.style.display) {
+                // Hide all history cards first
+                document.querySelectorAll('[id^="card-history-"]').forEach(card => {
+                    card.style.display = 'none';
+                });
+                
+                // Show the history card for the current tab
+                historyCard.style.display = 'block';
+                this.innerHTML = '<i class="fas fa-times"></i> Close History';
+                // Update history display when opening
+                updateHistoryDisplay(activeTab);
+            } else {
+                historyCard.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-history"></i> History';
+            }
+        });
+        
+        // Clear history for specific tab
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('clear-history-tab')) {
+                if (confirm('Are you sure you want to clear all analysis history?')) {
+                    localStorage.removeItem('jobAnalysisHistory');
+                    const tab = e.target.getAttribute('data-tab');
+                    updateHistoryDisplay(tab);
+                }
+            }
+        });
+        
+        // Save analysis to history
+        function saveToHistory(data, requestData, inputType) {
+            // Get existing history from localStorage or initialize empty array
+            let history = JSON.parse(localStorage.getItem('jobAnalysisHistory')) || [];
+                    
+            // Create history item
+            const historyItem = {
+                id: Date.now(), // Simple ID based on timestamp
+                timestamp: new Date().toLocaleString(),
+                prediction: data.prediction,
+                confidence: data.confidence,
+                jobDetails: data.job_details || {},
+                inputType: inputType,
+                inputData: {}
+            };
+                    
+            // Store input data based on type
+            if (inputType === 'url') {
+                historyItem.inputData.url = requestData.url;
+            } else if (inputType === 'text') {
+                historyItem.inputData.text = requestData.text;
+            } else if (inputType === 'manual') {
+                // Extract individual fields from the combined text
+                const fields = ['job-title', 'company-name', 'job-location', 'job-description', 'job-requirements', 'job-benefits'];
+                fields.forEach(fieldId => {
+                    const element = document.getElementById(fieldId);
+                    if (element) {
+                        const fieldName = fieldId.replace(/-/g, ''); // Remove dashes
+                        historyItem.inputData[fieldName] = element.value;
+                    }
+                });
+            }
+                    
+            // Add to beginning of array
+            history.unshift(historyItem);
+                    
+            // Keep only last 10 items
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+                    
+            // Save back to localStorage
+            localStorage.setItem('jobAnalysisHistory', JSON.stringify(history));
+                    
+            // Update history display if visible
+            updateHistoryDisplay();
+        }
+        
+        // Update history display
+        function updateHistoryDisplay(tab) {
+            const historyCard = document.getElementById(`card-history-${tab}`);
+            if (historyCard && historyCard.style.display !== 'none') {
+                const historyList = historyCard.querySelector('.history-list');
+                const history = JSON.parse(localStorage.getItem('jobAnalysisHistory')) || [];
+                        
+                if (history.length === 0) {
+                    historyList.innerHTML = '<p>No analysis history yet. Your analyzed jobs will appear here.</p>';
+                    return;
+                }
+                        
+                let historyHtml = '<div class="history-items">';
+                history.forEach(item => {
+                    const isFake = item.prediction === 'FAKE';
+                    const badgeClass = isFake ? 'badge-fake' : 'badge-real';
+                    const badgeText = isFake ? 'FAKE' : 'REAL';
+                            
+                    historyHtml += `
+                        <div class="history-item">
+                            <div class="history-item-header">
+                                <span class="history-badge ${badgeClass}">${badgeText}</span>
+                                <span class="history-timestamp">${item.timestamp}</span>
+                            </div>
+                            <div class="history-item-content">
+                                <div class="history-job-info">
+                                    <strong>${item.jobDetails.company || 'Unknown Company'}</strong> - 
+                                    ${item.jobDetails.title || 'Untitled Job'}
+                                </div>
+                                <div class="history-confidence">
+                                    Confidence: ${item.confidence}%
+                                </div>
+                                <div class="history-actions" style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-secondary reanalyze-btn" data-id="${item.id}" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; flex: 1;">
+                                        <i class="fas fa-redo"></i> Re-analyze
+                                    </button>
+                                    <button class="btn btn-danger delete-btn" data-id="${item.id}" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; flex: 1;">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                historyHtml += '</div>';
+                        
+                historyList.innerHTML = historyHtml;
+                        
+                // Add event listeners to reanalyze buttons
+                historyCard.querySelectorAll('.reanalyze-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.getAttribute('data-id');
+                        const history = JSON.parse(localStorage.getItem('jobAnalysisHistory')) || [];
+                        const item = history.find(h => h.id == itemId);
+                                
+                        if (item) {
+                            // Fill the form with the original data
+                            if (item.inputData.url) {
+                                // URL input
+                                document.getElementById('job-url').value = item.inputData.url;
+                                // Switch to URL tab
+                                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                                document.querySelector('.tab[data-tab="url"]').classList.add('active');
+                                document.getElementById('url-tab').classList.add('active');
+                                // Close history card
+                                document.getElementById(`card-history-${tab}`).style.display = 'none';
+                                document.getElementById('toggle-card-history').innerHTML = '<i class="fas fa-history"></i> History';
+                                // Trigger analysis
+                                analyzeJob('url');
+                            } else if (item.inputData.text && !item.inputData.title) {
+                                // Text input
+                                document.getElementById('job-text').value = item.inputData.text;
+                                // Switch to text tab
+                                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                                document.querySelector('.tab[data-tab="text"]').classList.add('active');
+                                document.getElementById('text-tab').classList.add('active');
+                                // Close history card
+                                document.getElementById(`card-history-${tab}`).style.display = 'none';
+                                document.getElementById('toggle-card-history').innerHTML = '<i class="fas fa-history"></i> History';
+                                // Trigger analysis
+                                analyzeJob('text');
+                            } else {
+                                // Manual input
+                                document.getElementById('job-title').value = item.inputData.title || '';
+                                document.getElementById('company-name').value = item.inputData.company || '';
+                                document.getElementById('job-location').value = item.inputData.location || '';
+                                document.getElementById('job-description').value = item.inputData.description || '';
+                                document.getElementById('job-requirements').value = item.inputData.requirements || '';
+                                document.getElementById('job-benefits').value = item.inputData.benefits || '';
+                                // Switch to manual tab
+                                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                                document.querySelector('.tab[data-tab="manual"]').classList.add('active');
+                                document.getElementById('manual-tab').classList.add('active');
+                                // Close history card
+                                document.getElementById(`card-history-${tab}`).style.display = 'none';
+                                document.getElementById('toggle-card-history').innerHTML = '<i class="fas fa-history"></i> History';
+                                // Trigger analysis
+                                analyzeJob('manual');
+                            }
+                        }
+                    });
+                });
+                        
+                // Add event listeners to delete buttons
+                historyCard.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const itemId = this.getAttribute('data-id');
+                        if (confirm('Are you sure you want to delete this analysis from history?')) {
+                            let history = JSON.parse(localStorage.getItem('jobAnalysisHistory')) || [];
+                            history = history.filter(item => item.id != itemId);
+                            localStorage.setItem('jobAnalysisHistory', JSON.stringify(history));
+                            updateHistoryDisplay(tab);
+                        }
+                    });
+                });
+            }
+        }
+        
+        // Example button handlers
+        document.querySelectorAll('.btn-example[data-url]').forEach(button => {
+            button.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                document.getElementById('job-url').value = url;
+            });
+        });
+
+        document.querySelectorAll('.btn-example[data-text-type]').forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-text-type');
+                const textarea = document.getElementById('job-text');
+                
+                if (type === 'legit') {
+                    textarea.value = `Software Engineer - Microsoft
+
+Join our team as a Software Engineer working on cutting-edge cloud technologies. You'll be responsible for developing scalable software solutions using modern programming languages and frameworks.
+
+Requirements:
+- Bachelor's degree in Computer Science or related field
+- 3+ years of experience with Python, Java, or C#
+- Experience with cloud platforms (Azure, AWS, or GCP)
+- Strong problem-solving skills and attention to detail
+
+Benefits:
+- Competitive salary and stock options
+- Comprehensive health insurance
+- 401k matching
+- Flexible PTO policy
+- Professional development opportunities`;
+                } else {
+                    textarea.value = `URGENT! Make $5000/week from home!
+
+No experience needed! Just send us $200 for training materials and start earning immediately!
+
+Requirements:
+- None - anyone can do this!
+- Must have email account
+- Willing to work from home
+
+Benefits:
+- Unlimited earning potential!
+- Work from anywhere
+- No boss breathing down your neck
+
+Send $200 to get started today!`;
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-example[data-entry-type]').forEach(button => {
+            button.addEventListener('click', function() {
+                const type = this.getAttribute('data-entry-type');
+                
+                if (type === 'legit') {
+                    document.getElementById('job-title').value = 'Software Engineer';
+                    document.getElementById('company-name').value = 'Microsoft';
+                    document.getElementById('job-location').value = 'Seattle, WA';
+                    document.getElementById('job-description').value = 'Join our team as a Software Engineer working on cutting-edge cloud technologies. You\'ll be responsible for developing scalable software solutions using modern programming languages and frameworks.';
+                    document.getElementById('job-requirements').value = 'Bachelor\'s degree in Computer Science or related field\n3+ years of experience with Python, Java, or C#\nExperience with cloud platforms (Azure, AWS, or GCP)\nStrong problem-solving skills and attention to detail';
+                    document.getElementById('job-benefits').value = 'Competitive salary and stock options\nComprehensive health insurance\n401k matching\nFlexible PTO policy\nProfessional development opportunities';
+                } else {
+                    document.getElementById('job-title').value = 'Work From Home - Easy Money';
+                    document.getElementById('company-name').value = 'QuickCash LLC';
+                    document.getElementById('job-location').value = 'Anywhere';
+                    document.getElementById('job-description').value = 'Make thousands weekly! Just process payments for our company. Send bank details for setup.';
+                    document.getElementById('job-requirements').value = 'None - anyone can do this!\nMust have bank account\nAvailable 24/7';
+                    document.getElementById('job-benefits').value = '$3000+ weekly guaranteed\nWork from anywhere\nNo experience required';
+                }
+            });
+        });
+
+        // Example job click handlers
+        document.querySelectorAll('.example-job').forEach(job => {
+            job.addEventListener('click', function() {
+                const exampleType = this.getAttribute('data-example');
+                
+                if (exampleType === 'fake1' || exampleType === 'fake2') {
+                    // Fill with fake job example
+                    document.getElementById('job-title').value = exampleType === 'fake1' ? 'Work From Home - Easy Money' : 'Data Entry Specialist';
+                    document.getElementById('company-name').value = exampleType === 'fake1' ? 'QuickCash LLC' : 'DataEntry Pro';
+                    document.getElementById('job-location').value = exampleType === 'fake1' ? 'Anywhere' : 'Remote';
+                    document.getElementById('job-description').value = exampleType === 'fake1' ? 
+                        'Make thousands weekly! Just process payments for our company. Send bank details for setup.' : 
+                        'Simple data entry work from home. Pay $99 for training kit and start earning $30/hour immediately.';
+                    document.getElementById('job-requirements').value = exampleType === 'fake1' ? 
+                        'None - anyone can do this!\nMust have bank account\nAvailable 24/7' : 
+                        'No experience required\nMust purchase training materials';
+                    document.getElementById('job-benefits').value = exampleType === 'fake1' ? 
+                        '$3000+ weekly guaranteed\nWork from anywhere\nNo experience required' : 
+                        'High hourly rate\nImmediate start\nWork from home';
+                } else {
+                    // Fill with real job example
+                    document.getElementById('job-title').value = exampleType === 'real1' ? 'Software Engineer' : 'Data Scientist';
+                    document.getElementById('company-name').value = exampleType === 'real1' ? 'Microsoft' : 'Google';
+                    document.getElementById('job-location').value = exampleType === 'real1' ? 'Seattle, WA' : 'Mountain View, CA';
+                    document.getElementById('job-description').value = exampleType === 'real1' ? 
+                        'Join our team as a Software Engineer working on cutting-edge cloud technologies. You\'ll be responsible for developing scalable software solutions using modern programming languages and frameworks.' : 
+                        'Analyze large datasets to drive business insights. Build machine learning models and work with product teams.';
+                    document.getElementById('job-requirements').value = exampleType === 'real1' ? 
+                        'Bachelor\'s degree in Computer Science or related field\n3+ years of experience with Python, Java, or C#\nExperience with cloud platforms (Azure, AWS, or GCP)\nStrong problem-solving skills and attention to detail' : 
+                        'PhD in Statistics/CS\nExperience with Python, R, SQL, machine learning';
+                    document.getElementById('job-benefits').value = exampleType === 'real1' ? 
+                        'Competitive salary and stock options\nComprehensive health insurance\n401k matching\nFlexible PTO policy\nProfessional development opportunities' : 
+                        'Stock options\nComprehensive benefits\nLearning opportunities';
+                }
+                
+                // Switch to manual entry tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelector('.tab[data-tab="manual"]').classList.add('active');
+                document.getElementById('manual-tab').classList.add('active');
+            });
+        });
+
+        // Form submission handlers
+        document.getElementById('url-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            analyzeJob('url');
+        });
+
+        document.getElementById('text-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            analyzeJob('text');
+        });
+
+        document.getElementById('manual-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            analyzeJob('manual');
+        });
+
+        // Clear button handlers
+        document.getElementById('url-clear').addEventListener('click', function() {
+            document.getElementById('job-url').value = '';
+        });
+
+        document.getElementById('text-clear').addEventListener('click', function() {
+            document.getElementById('job-text').value = '';
+        });
+
+        document.getElementById('manual-clear').addEventListener('click', function() {
+            document.getElementById('job-title').value = '';
+            document.getElementById('company-name').value = '';
+            document.getElementById('job-location').value = '';
+            document.getElementById('job-description').value = '';
+            document.getElementById('job-requirements').value = '';
+            document.getElementById('job-benefits').value = '';
+        });
+
+        // Clear results handler
+        document.getElementById('clear-results').addEventListener('click', function() {
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('retry-analysis').style.display = 'none';
+        });
+        
+        // Retry analysis handler
+        document.getElementById('retry-analysis').addEventListener('click', function() {
+            // Get the last analyzed URL
+            const lastUrl = document.getElementById('job-url').value;
+            if (lastUrl) {
+                analyzeJob('url');
+            }
+        });
+        
+        // Test connectivity handler
+        document.getElementById('test-connectivity').addEventListener('click', function() {
+            const statusElement = document.getElementById('connectivity-status');
+            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing...';
+            
+            fetch('/health')
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
+            })
+            .then(data => {
+                statusElement.innerHTML = '<span style="color: green;"><i class="fas fa-check-circle"></i> Connected</span>';
+            })
+            .catch(error => {
+                statusElement.innerHTML = `<span style="color: red;"><i class="fas fa-exclamation-circle"></i> Network error: ${error.message}</span>`;
+            });
+        });
+        
+        // Test URL handler
+        document.getElementById('test-url').addEventListener('click', function() {
+            const urlInput = document.getElementById('job-url');
+            const url = urlInput.value.trim();
+            const statusElement = document.getElementById('connectivity-status');
+            
+            if (!url) {
+                statusElement.innerHTML = '<span style="color: orange;"><i class="fas fa-exclamation-circle"></i> Please enter a URL</span>';
+                return;
+            }
+            
+            statusElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Testing URL...';
+            
+            fetch('/test-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    // Customize error message for unsupported job portals
+                    let errorMessage = data.error;
+                    if (data.error.includes('Unsupported job portal') || data.error.includes('does not appear to be a job posting')) {
+                        errorMessage = 'This link does not appear to be a job posting. Please enter a valid job posting URL from any major job board.';
+                    }
+                    statusElement.innerHTML = `<span style="color: red;"><i class="fas fa-exclamation-circle"></i> Error: ${errorMessage}</span>`;
+                } else if (data.status === 'accessible') {
+                    statusElement.innerHTML = '<span style="color: green;"><i class="fas fa-check-circle"></i> URL is accessible</span>';
+                } else if (data.status === 'not_found') {
+                    statusElement.innerHTML = '<span style="color: red;"><i class="fas fa-exclamation-circle"></i> URL not found (404)</span>';
+                } else if (data.status === 'forbidden') {
+                    statusElement.innerHTML = '<span style="color: red;"><i class="fas fa-exclamation-circle"></i> Access forbidden (403)</span>';
+                } else {
+                    statusElement.innerHTML = `<span style="color: orange;"><i class="fas fa-exclamation-circle"></i> ${data.message}</span>`;
+                }
+            })
+            .catch(error => {
+                statusElement.innerHTML = `<span style="color: red;"><i class="fas fa-exclamation-circle"></i> Network error: ${error.message}</span>`;
+            });
+        });
+
+        // Actual analysis function
+        function analyzeJob(type) {
+            // Show loading spinner
+            document.getElementById('loading-spinner').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            
+            // Prepare data based on input type
+            let requestData = {};
+            
+            if (type === 'url') {
+                requestData.url = document.getElementById('job-url').value;
+            } else if (type === 'text') {
+                requestData.text = document.getElementById('job-text').value;
+            } else if (type === 'manual') {
+                requestData.text = `
+                    ${document.getElementById('job-title').value}
+                    ${document.getElementById('company-name').value}
+                    ${document.getElementById('job-location').value}
+                    ${document.getElementById('job-description').value}
+                    ${document.getElementById('job-requirements').value}
+                    ${document.getElementById('job-benefits').value}
+                `;
+            }
+            
+            // First check if server is responsive
+            fetch('/health')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server is not responding');
+                }
+                return response.json();
+            })
+            .then(() => {
+                // Server is healthy, proceed with analysis
+                return fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+            })
+            .catch(healthError => {
+                // Hide loading spinner
+                document.getElementById('loading-spinner').style.display = 'none';
+                
+                // Show error message
+                document.getElementById('results-section').style.display = 'block';
+                
+                let errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+                if (healthError.message) {
+                    errorMessage = healthError.message;
+                }
+                
+                document.getElementById('result-message').innerHTML = `<strong>Error:</strong> ${errorMessage}`;
+                document.getElementById('result-badge').textContent = 'SERVER UNREACHABLE';
+                document.getElementById('result-badge').className = 'result-badge badge-fake';
+                
+                // Hide confidence meter and stats for errors
+                document.querySelector('.confidence-meter').style.display = 'none';
+                document.querySelector('.stats-grid').style.display = 'none';
+                
+                // Hide company info and explanation if they exist
+                const jobInfo = document.getElementById('job-info');
+                const explanationText = document.getElementById('explanation-text');
+                if (jobInfo) jobInfo.style.display = 'none';
+                if (explanationText) explanationText.style.display = 'none';
+                
+                // Show error suggestions
+                document.getElementById('error-suggestions').style.display = 'block';
+                
+                // Show network error suggestion
+                document.getElementById('network-error-suggestion').style.display = 'block';
+                
+                // Hide 404 error suggestion
+                document.getElementById('not-found-suggestion').style.display = 'none';
+                
+                // Show retry button
+                document.getElementById('retry-analysis').style.display = 'inline-block';
+                
+                // Scroll to results
+                document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+                
+                // Don't proceed with the analysis
+                throw new Error('SKIP_ANALYSIS');
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                document.getElementById('loading-spinner').style.display = 'none';
+                
+                // Show results section
+                document.getElementById('results-section').style.display = 'block';
+                
+                // Check for errors
+                if (data.error) {
+                    // Customize error message for unsupported job portals
+                    let errorMessage = data.error;
+                    if (data.error.includes('Unsupported job portal') || data.error.includes('does not appear to be a job posting')) {
+                        errorMessage = 'This link does not appear to be a job posting. Please enter a valid job posting URL from any major job board.';
+                    }
+                                        
+                    document.getElementById('result-message').innerHTML = `<strong>Error:</strong> ${errorMessage}`;
+                    document.getElementById('result-badge').textContent = 'ANALYSIS FAILED';
+                    document.getElementById('result-badge').className = 'result-badge badge-fake';
+                                        
+                    // Hide confidence meter and stats for errors
+                    document.querySelector('.confidence-meter').style.display = 'none';
+                    document.querySelector('.stats-grid').style.display = 'none';
+                                        
+                    // Hide company info and explanation if they exist
+                    const jobInfo = document.getElementById('job-info');
+                    const explanationText = document.getElementById('explanation-text');
+                    if (jobInfo) jobInfo.style.display = 'none';
+                    if (explanationText) explanationText.style.display = 'none';
+                                        
+                    // Show error suggestions
+                    document.getElementById('error-suggestions').style.display = 'block';
+                    
+                    // Show retry button for URL analyses
+                    if (type === 'url') {
+                        document.getElementById('retry-analysis').style.display = 'inline-block';
+                    }
+                    
+                    return;
+                } else {
+                    // Show confidence meter and stats for successful analyses
+                    document.querySelector('.confidence-meter').style.display = 'block';
+                    document.querySelector('.stats-grid').style.display = 'grid';
+                    
+                    // Hide error suggestions for successful analyses
+                    document.getElementById('error-suggestions').style.display = 'none';
+                    document.getElementById('network-error-suggestion').style.display = 'none';
+                    document.getElementById('not-found-suggestion').style.display = 'none';
+                    
+                    // Reset suggestions to default
+                    const suggestionList = document.getElementById('suggestion-list');
+                    suggestionList.innerHTML = `
+                        <li>Try pasting the job description directly instead of using a URL</li>
+                        <li>Check if the website is accessible in your browser</li>
+                        <li>Ensure you have a stable internet connection</li>
+                        <li>Try a different job posting URL</li>
+                    `;
+                    
+                    // Job info should remain visible for successful analyses
+                    // The jobInfoElement display is controlled by the job info setting logic below
+                    
+                    // Hide retry button for successful analyses
+                    document.getElementById('retry-analysis').style.display = 'none';
+                }
+                
+                // Update UI with results
+                const badge = document.getElementById('result-badge');
+                const message = document.getElementById('result-message');
+                const confidenceLevel = document.getElementById('confidence-level');
+                const confidenceValue = document.getElementById('confidence-value');
+                const fakeProbElement = document.getElementById('fake-prob');
+                const realProbElement = document.getElementById('real-prob');
+                
+                // Create explanation element if it doesn't exist
+                let explanationElement = document.getElementById('explanation-text');
+                if (!explanationElement) {
+                    explanationElement = document.createElement('p');
+                    explanationElement.id = 'explanation-text';
+                    explanationElement.style.marginTop = '1rem';
+                    explanationElement.style.padding = '1rem';
+                    explanationElement.style.backgroundColor = 'var(--body-bg)';
+                    explanationElement.style.borderRadius = '8px';
+                    explanationElement.style.textAlign = 'left';
+                    document.querySelector('.result-content').appendChild(explanationElement);
+                }
+                
+                // Create job info element if it doesn't exist
+                let jobInfoElement = document.getElementById('job-info');
+                if (!jobInfoElement) {
+                    jobInfoElement = document.createElement('div');
+                    jobInfoElement.id = 'job-info';
+                    jobInfoElement.style.marginTop = '1rem';
+                    jobInfoElement.style.fontWeight = 'bold';
+                    jobInfoElement.style.textAlign = 'left';
+                    document.querySelector('.result-content').appendChild(jobInfoElement);
+                }
+                
+                // Set job information
+                let jobInfoHtml = '';
+                if (data.job_details) {
+                    if (data.job_details.title && data.job_details.title !== 'Content extracted from page' && data.job_details.title !== 'Provided Text' && data.job_details.title !== 'Not specified') {
+                        jobInfoHtml += `<div><strong>Job Title:</strong> ${data.job_details.title}</div>`;
+                    }
+                    if (data.job_details.company && data.job_details.company !== 'N/A' && data.job_details.company !== 'See full content below' && data.job_details.company !== 'Not specified') {
+                        jobInfoHtml += `<div><strong>Company:</strong> ${data.job_details.company}</div>`;
+                    }
+                    if (data.job_details.location && data.job_details.location !== 'Various' && data.job_details.location !== 'Not specified') {
+                        jobInfoHtml += `<div><strong>Location:</strong> ${data.job_details.location}</div>`;
+                    }
+                    if (data.job_details.posted_date && data.job_details.posted_date !== 'Not specified') {
+                        jobInfoHtml += `<div><strong>Posted:</strong> ${data.job_details.posted_date}</div>`;
+                    }
+                }
+                
+                if (jobInfoHtml) {
+                    jobInfoElement.innerHTML = jobInfoHtml;
+                    jobInfoElement.style.display = 'block';
+                } else {
+                    jobInfoElement.style.display = 'none';
+                }
+                
+                // Set prediction results
+                const isFake = data.prediction === 'FAKE';
+                const confidence = data.confidence;
+                const fakeProb = data.fake_probability;
+                const realProb = data.real_probability;
+                
+                if (isFake) {
+                    badge.textContent = 'FAKE JOB';
+                    badge.className = 'result-badge badge-fake';
+                    message.textContent = 'Warning: This job posting appears to be fraudulent.';
+                    confidenceLevel.className = 'confidence-level fake-confidence';
+                } else {
+                    badge.textContent = 'REAL JOB';
+                    badge.className = 'result-badge badge-real';
+                    message.textContent = '';
+                    confidenceLevel.className = 'confidence-level real-confidence';
+                }
+                
+                // Set explanation with enhanced details for fake jobs
+                if (isFake && data.explanation) {
+                    // For fake jobs, provide detailed bullet points
+                    let detailedExplanation = '<strong>Reasons this job posting is suspicious:</strong>';
+                    detailedExplanation += '<ul style="text-align: left; margin-top: 0.5rem; padding-left: 1.5rem;">';
+                    
+                    // Split the explanation into bullet points if it contains multiple reasons
+                    const reasons = data.explanation.split(/(?=[A-Z])/).filter(reason => reason.trim() !== '');
+                    if (reasons.length > 1) {
+                        reasons.forEach(reason => {
+                            if (reason.trim() !== '') {
+                                detailedExplanation += `<li>${reason.trim()}</li>`;
+                            }
+                        });
+                    } else {
+                        // If we can't split into multiple reasons, use the original explanation
+                        detailedExplanation += `<li>${data.explanation}</li>`;
+                    }
+                    
+                    detailedExplanation += '</ul>';
+                    detailedExplanation += '<strong style="display: block; margin-top: 1rem;">Red Flags to Watch For:</strong>';
+                    detailedExplanation += '<ul style="text-align: left; margin-top: 0.5rem; padding-left: 1.5rem;">';
+                    detailedExplanation += '<li>Promises of high income with little to no experience required</li>';
+                    detailedExplanation += '<li>Requests for personal information or upfront payments</li>';
+                    detailedExplanation += '<li>Vague job responsibilities or company information</li>';
+                    detailedExplanation += '<li>Pressure to act quickly or "limited time offers"</li>';
+                    detailedExplanation += '<li>Contact methods that avoid traditional professional channels</li>';
+                    detailedExplanation += '<li>Unrealistic benefits or guarantees</li>';
+                    detailedExplanation += '</ul>';
+                    detailedExplanation += '<strong style="display: block; margin-top: 1rem;">Safety Recommendations:</strong>';
+                    detailedExplanation += '<ul style="text-align: left; margin-top: 0.5rem; padding-left: 1.5rem;">';
+                    detailedExplanation += '<li>Research the company through official websites and trusted sources</li>';
+                    detailedExplanation += '<li>Be cautious of any requests for money or sensitive personal information</li>';
+                    detailedExplanation += '<li>Verify contact information through official company channels</li>';
+                    detailedExplanation += '<li>Consult with career counselors or trusted professionals</li>';
+                    detailedExplanation += '<li>Report suspicious postings to relevant authorities</li>';
+                    detailedExplanation += '</ul>';
+                    explanationElement.innerHTML = detailedExplanation;
+                } else {
+                    // For real jobs or when no explanation is available
+                    explanationElement.textContent = data.explanation || 'No detailed explanation available.';
+                }
+                
+                confidenceLevel.style.width = `${confidence}%`;
+                confidenceValue.textContent = `${confidence}%`;
+                fakeProbElement.textContent = `${fakeProb}%`;
+                realProbElement.textContent = `${realProb}%`;
+                
+                // Save to history
+                saveToHistory(data, requestData, type);
+                
+                // Update history display for the current tab
+                updateHistoryDisplay(type);
+                
+                // Scroll to results
+                document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                // Skip if this is our special SKIP_ANALYSIS error
+                if (error.message === 'SKIP_ANALYSIS') {
+                    return;
+                }
+                
+                // Hide loading spinner
+                document.getElementById('loading-spinner').style.display = 'none';
+                
+                // Show error message
+                document.getElementById('results-section').style.display = 'block';
+                
+                let errorMessage = 'An unexpected error occurred.';
+                let isNetworkError = false;
+                let is404Error = false;
+                
+                if (error instanceof TypeError && error.message.includes('fetch')) {
+                    errorMessage = 'Network error: Unable to connect to the server. Please check your internet connection and try again.';
+                    isNetworkError = true;
+                } else if (error.message) {
+                    errorMessage = `Error: ${error.message}`;
+                    
+                    // Check if this is a 404 error
+                    if (error.message.includes('404') || error.message.includes('not found')) {
+                        is404Error = true;
+                    }
+                }
+                
+                document.getElementById('result-message').innerHTML = `<strong>Error:</strong> ${errorMessage}`;
+                document.getElementById('result-badge').textContent = 'ANALYSIS FAILED';
+                document.getElementById('result-badge').className = 'result-badge badge-fake';
+                
+                // Hide confidence meter and stats for errors
+                document.querySelector('.confidence-meter').style.display = 'none';
+                document.querySelector('.stats-grid').style.display = 'none';
+                
+                // Hide company info and explanation if they exist
+                const jobInfo = document.getElementById('job-info');
+                const explanationText = document.getElementById('explanation-text');
+                if (jobInfo) jobInfo.style.display = 'none';
+                if (explanationText) explanationText.style.display = 'none';
+                
+                // Show error suggestions
+                document.getElementById('error-suggestions').style.display = 'block';
+                
+                // Show network error suggestion if applicable
+                if (isNetworkError) {
+                    document.getElementById('network-error-suggestion').style.display = 'block';
+                } else {
+                    document.getElementById('network-error-suggestion').style.display = 'none';
+                }
+                
+                // Show 404 error suggestion if applicable
+                if (is404Error) {
+                    // Update the main suggestion list for 404 errors
+                    const suggestionList = document.getElementById('suggestion-list');
+                    suggestionList.innerHTML = `
+                        <li>Verify the URL is correct and complete</li>
+                        <li>Check if the job posting has been removed or moved</li>
+                        <li>Try finding the job posting on the company's main website</li>
+                        <li>Paste the job description directly instead of using the URL</li>
+                    `;
+                    
+                    // Show the not found suggestion
+                    document.getElementById('not-found-suggestion').style.display = 'block';
+                } else {
+                    document.getElementById('not-found-suggestion').style.display = 'none';
+                }
+                
+                // Show retry button for URL analyses
+                if (type === 'url') {
+                    document.getElementById('retry-analysis').style.display = 'inline-block';
+                }
+                
+                // Scroll to results
+                document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+        
+        // Fetch and display user info
+        fetch('/user')
+            .then(response => response.json())
+            .then(data => {
+                if (data.username) {
+                    document.getElementById('user-info').textContent = `Welcome, ${data.username}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user info:', error);
+            });
+    </script>
+</body>
+</html>

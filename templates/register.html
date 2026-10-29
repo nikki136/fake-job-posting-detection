@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | JobShield AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <!-- Left Section -->
+        <div class="login-left">
+            <div class="logo-register">
+                <i class="fas fa-shield-alt"></i>
+                <h1>JobShield AI</h1>
+                <p>Create a New Account</p>
+            </div>
+            
+            <div id="error-message" class="error-message"></div>
+            <div id="success-message" class="success-message"></div>
+            
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="btn">Register</button>
+            </form>
+            
+            <div class="switch-auth">
+                <p>Already have an account? <a href="/login">Login here</a></p>
+                <p><a href="/">&larr; Back to Home</a></p>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="login-right">
+            <div class="image-toggle-container">
+                <div class="image-slider">
+                    <div class="slide active">
+                        <div class="slide-content">
+                            <i class="fas fa-user-plus slide-icon"></i>
+                            <h4>Easy Registration</h4>
+                            <p>Create an account in seconds to access our protection</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-content">
+                            <i class="fas fa-lock slide-icon"></i>
+                            <h4>Secure Access</h4>
+                            <p>Your data is encrypted and securely stored</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="slide-content">
+                            <i class="fas fa-bolt slide-icon"></i>
+                            <h4>Instant Protection</h4>
+                            <p>Start protecting your job search immediately</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-dots">
+                    <span class="dot active" data-slide="0"></span>
+                    <span class="dot" data-slide="1"></span>
+                    <span class="dot" data-slide="2"></span>
+                </div>
+            </div>
+            <a href="/login" class="signup">Login</a>
+        </div>
+    </div>
+
+    <script>
+        // Use MutationObserver instead of deprecated DOM events
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                // Handle mutations if needed
+            });
+        });
+        
+        // Observe the document for changes
+        observer.observe(document, { childList: true, subtree: true });
+        
+        // Image slider functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            // Show current slide
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            
+            currentSlide = index;
+        }
+        
+        // Dot click events
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+            });
+        });
+        
+        // Auto slide change
+        setInterval(() => {
+            let nextSlide = (currentSlide + 1) % slides.length;
+            showSlide(nextSlide);
+        }, 5000);
+        
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const errorMessage = document.getElementById('error-message');
+            const successMessage = document.getElementById('success-message');
+            
+            // Clear previous messages
+            errorMessage.textContent = '';
+            errorMessage.style.display = 'none';
+            successMessage.textContent = '';
+            successMessage.style.display = 'none';
+            
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Create JSON data
+            const data = {
+                username: username,
+                email: email,
+                password: password
+            };
+            
+            // Submit form via fetch with JSON data
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                // Handle different HTTP status codes appropriately
+                if (response.status === 400) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Bad Request');
+                    });
+                } else if (response.status === 500) {
+                    throw new Error('Server error. Please try again later.');
+                } else if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    successMessage.textContent = data.message || 'Registration successful!';
+                    successMessage.style.display = 'block';
+                    // Redirect to detection page (auto-login)
+                    setTimeout(() => {
+                        window.location.href = '/detection';
+                    }, 2000);
+                } else {
+                    errorMessage.textContent = data.error || data.message || 'Registration failed';
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage.textContent = 'Unable to connect to server. Please ensure the application is running.';
+                } else {
+                    errorMessage.textContent = error.message || 'Registration failed. Please try again.';
+                }
+                errorMessage.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
